@@ -24,12 +24,17 @@ export class MTGClass {
     }
 
     async getCardRandom(){
-        const getCard = await axios.get("https://api.scryfall.com/cards/random");
-        return this.getCardEmbed(getCard.data);
+        try {
+            const getCard = await axios.get("https://api.scryfall.com/cards/random");
+            return this.getCardEmbed(getCard.data);
+        }
+        catch (e) {
+            return false;
+        }
     }
     
     async cardSearch(){
-        const cardName = this.interaction.options.getString('name')
+        const cardName = this.interaction.options.getString('name');
         let findCard: any = await this.getCardFuzzy(cardName);
         if(!findCard){
             const findCardAC = await this.getCardAutoComplete(cardName);
@@ -42,18 +47,32 @@ export class MTGClass {
     }
 
     async getCardFuzzy(cardName: string){
-        return await axios.get(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`)
-            .catch(function (error) { return false;});
+        try {
+            return await axios.get(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        }
+        catch (e) {
+            return false;
+        }
     }
     
     async getCardExact(cardExactName: string){
-        return await axios.get(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardExactName)}`);
+        try {
+            return await axios.get(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardExactName)}`);
+        }
+        catch (e) {
+            return false;
+        }
     }
     
     async getCardAutoComplete(cardName: string){
-        const getCardAC = await axios.get(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(cardName)}`);
-        if(getCardAC.data.data.length <= 0) return false;
-        return getCardAC;
+        try {
+            const getCardAC = await axios.get(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(cardName)}`);
+            if(getCardAC.data.data.length <= 0) return false;
+            return getCardAC;
+        }
+        catch (e) {
+            return false;
+        }
     }
     
     getCardEmbed(cardData: any){
