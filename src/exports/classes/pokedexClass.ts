@@ -1,5 +1,6 @@
 ﻿import {BuildMessage} from "./messageEmbed";
 import axios from "axios";
+import {Capitalize} from "../functions/capitalize";
 
 export class Pokedex {
     private interaction: any;
@@ -67,8 +68,6 @@ export class Pokedex {
         return this.embed.getMessage();
     }
 }
-
-const Capitalize = (word: string) => {return word.charAt(0).toUpperCase() + word.slice(1)}
 function EvolutionChain(data: any) {
     const result: string[] = [];
     function traverseChain(chain: any) {

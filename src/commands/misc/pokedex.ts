@@ -21,14 +21,15 @@ module.exports = {
                 .setName('random')
                 .setDescription('Returns a random Pokémon!')), //1-1025 total
     async execute(interaction: any) {
-        try {
+            await interaction.deferReply();
+            
             const pokedexObj = new Pokedex(interaction, new BuildMessage());
             const response = await pokedexObj.executeSubcommand();
-
-            await interaction.reply({embeds: [response]});
-        }
-        catch (e) {
-            await interaction.reply({content: "ERROR: Could not find Pokedex result!", ephemeral: true });
-        }
+            if(!response){
+                await interaction.editReply({content: "ERROR: Could not find Pokedex result! [DELETING MESSAGE]"});
+                setTimeout(async() => await interaction.deleteReply(), 4000);
+                return;
+            }
+            await interaction.editReply({embeds: [response]});
     },
 };

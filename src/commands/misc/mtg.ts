@@ -19,10 +19,15 @@ module.exports = {
         )),
     async execute(interaction: any) {
         try {
+            await interaction.deferReply();
             const mtgObj = new MTGClass(interaction, new BuildMessage());
             const result = await mtgObj.executeSubcommand();
-            if(!result) return await interaction.reply({ content: 'ERROR: I cant find this card!', ephemeral: true });
-            await interaction.reply({embeds: result});
+            if(!result){ 
+                await interaction.editReply({ content: 'ERROR: Unable to find this card! [DELETING MESSAGE]' });
+                setTimeout(async() => await interaction.deleteReply(), 4000);
+                return;
+            }
+            await interaction.editReply({embeds: result});
         }
         catch (e) {console.error(e);}
     },
