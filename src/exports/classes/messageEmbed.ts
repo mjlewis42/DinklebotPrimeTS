@@ -42,11 +42,13 @@
 
     getMessage() {return this.messageEmbed;}
 
-    errorMessage(title: string, description: string) {
-        this.createDefaultEmbed();
-        this.setColor('#FF0000');
-        this.setTitle(':x: ERROR: ' + title);
-        this.setDescription(description);
+    errorMessage() {
+        this.setTitle("LOG ENTRY: [TRANSMISSION ERROR]");
+        this.setDescription("Data Log Corruption Detected: Query Processing Failure" +
+            "\n\n[INQUIRY DELETION IMMINENT]" +
+            "\n\n*Resuming Standard Protocols...*");
+        this.setThumbnail("https://i.imgur.com/pgkcRn9.png")
+        this.setColor('#5C0000');
         return this.messageEmbed;
     }
 }

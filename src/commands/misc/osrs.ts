@@ -1,6 +1,7 @@
 ﻿import {SlashCommandBuilder} from 'discord.js';
 import {BuildMessage} from "../../exports/classes/messageEmbed";
 import {OSRSClass} from "../../exports/classes/osrsClass";
+const wait = require('node:timers/promises').setTimeout;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,16 +18,20 @@ module.exports = {
                 .setName('ironman-status')
                 .setDescription('Search for player by name'))),
     async execute(interaction: any) {
+        await interaction.deferReply();
         try {
-            await interaction.deferReply();
-            const osrsObj = new OSRSClass(interaction, new BuildMessage());
+            const embed = new BuildMessage();
+            const osrsObj = new OSRSClass(interaction, embed);
+            
             const response = await osrsObj.executeSubcommands();
             if(!response){
-                await interaction.editReply({ content: 'ERROR: Unable to find this player! [DELETING MESSAGE]' });
-                setTimeout(async() => await interaction.deleteReply(), 4000);
-                return;
+                await interaction.editReply({ embeds: [embed.errorMessage()] });
+                await wait(7_000);
+                await interaction.deleteReply();
             }
-            await interaction.editReply({embeds: [response]});
+            else{
+                await interaction.editReply({embeds: [response]});
+            }
         }
         catch (e) {console.error(e);}
     },

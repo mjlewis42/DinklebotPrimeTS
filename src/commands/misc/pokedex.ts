@@ -1,6 +1,7 @@
 ﻿import { SlashCommandBuilder } from 'discord.js';
 import { BuildMessage } from '../../exports/classes/messageEmbed';
 import {Pokedex} from "../../exports/classes/pokedexClass";
+const wait = require('node:timers/promises').setTimeout;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,14 +23,18 @@ module.exports = {
                 .setDescription('Returns a random Pokémon!')), //1-1025 total
     async execute(interaction: any) {
             await interaction.deferReply();
+
+            const embed = new BuildMessage();
+            const pokedexObj = new Pokedex(interaction, embed);
             
-            const pokedexObj = new Pokedex(interaction, new BuildMessage());
             const response = await pokedexObj.executeSubcommand();
             if(!response){
-                await interaction.editReply({content: "ERROR: Could not find Pokedex result! [DELETING MESSAGE]"});
-                setTimeout(async() => await interaction.deleteReply(), 4000);
-                return;
+                await interaction.editReply({ embeds: [embed.errorMessage()] });
+                await wait(7_000);
+                await interaction.deleteReply();
             }
-            await interaction.editReply({embeds: [response]});
+            else{
+                await interaction.editReply({embeds: [response]});
+            }
     },
 };

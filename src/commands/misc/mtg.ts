@@ -1,6 +1,7 @@
 ﻿import {SlashCommandBuilder} from 'discord.js';
 import {MTGClass} from "../../exports/classes/mtgClass";
 import {BuildMessage} from "../../exports/classes/messageEmbed";
+import {setTimeout as wait} from "node:timers/promises";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,14 +21,19 @@ module.exports = {
     async execute(interaction: any) {
         try {
             await interaction.deferReply();
-            const mtgObj = new MTGClass(interaction, new BuildMessage());
+
+            const embed = new BuildMessage();
+            const mtgObj = new MTGClass(interaction, embed);
+            
             const result = await mtgObj.executeSubcommand();
-            if(!result){ 
-                await interaction.editReply({ content: 'ERROR: Unable to find this card! [DELETING MESSAGE]' });
-                setTimeout(async() => await interaction.deleteReply(), 4000);
-                return;
+            if(!result){
+                await interaction.editReply({ embeds: [embed.errorMessage()] });
+                await wait(7_000);
+                await interaction.deleteReply();
             }
-            await interaction.editReply({embeds: result});
+            else{
+                await interaction.editReply({embeds: result});
+            }
         }
         catch (e) {console.error(e);}
     },

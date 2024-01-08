@@ -84,7 +84,7 @@ export class OSRSClass{
         const mappedData = mapData(data);
         this.embed.setTitle(`${capitalizeFirstLetters(this.playerName)}`);
         this.embed.setColor("#FFD700");
-        this.embed.setDescription('Old School Runescape Hiscores');
+        this.embed.setDescription('Old School Runescape Hiscores | Work in progress');
         mappedData.map((activity, i: number) => {
             if(i == 0) this.embed.setField(activity?.name, activity?.tLevel, true);
             if(i > 0 && i < 24) this.embed.setField(activity?.name, activity?.level, true);
