@@ -1,99 +1,99 @@
-﻿import {BuildMessage} from "./messageEmbed";
+﻿import { BuildMessage } from "./messageEmbed";
 import axios from "axios";
-import {capitalizeFirstLetters} from "../functions/capitalize";
+import { capitalizeFirstLetters } from "../functions/capitalize";
 
-export class OSRSClass{
+export class OSRSClass {
     private interaction;
     private embed: BuildMessage;
     private playerName: string;
     private IMType: string;
     private playerType: string = '';
-    
+
     constructor(interaction: any, embed: BuildMessage) {
         this.interaction = interaction;
         this.playerName = interaction?.options?.getString('name');
         this.IMType = this.interaction.options.getString('ironman-status');
         this.embed = embed;
     }
-    
-    async executeSubcommands(){
+
+    async executeSubcommands() {
         const subCommand = this.interaction.options.getSubcommand();
-        switch(subCommand){
+        switch (subCommand) {
             case 'player':
                 return await this.playerHiscore();
             default:
                 throw new Error('Invalid subcommand');
         }
     }
-    
-    async playerHiscore(){
+
+    async playerHiscore() {
         try {
             const getPlayer = await this.getAccountType();
             return await this.getHiscoreEmbed(getPlayer);
         }
-        catch (e) {return false;}
+        catch (e) { return false; }
     }
 
     async getAccountType() {
         const status = this.interaction.options.getString('ironman-status');
         try {
-            if(status){}
+            if (status) { }
             return await this.getPlayer();
         } catch (e) {
             return false;
         }
     }
-    
-    async getPlayer(){
+
+    async getPlayer() {
         try {
             const player = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=${this.playerName}`);
             this.playerType = "NORMAL"
             return player.data;
         }
-        catch (e) { return false;}
+        catch (e) { return false; }
     }
-    
-    async getIMPlayer(){
+
+    async getIMPlayer() {
         try {
             const testIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=${this.playerName}`);
             this.playerType = "IM"
             return testIM.data;
         }
-        catch (e) { return false;}
+        catch (e) { return false; }
     }
-    
-    async getUIMPlayer(){
+
+    async getUIMPlayer() {
         try {
             const testUIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=${this.playerName}`);
             this.playerType = "UIM"
             return testUIM.data;
         }
-        catch (e) { return false;}
+        catch (e) { return false; }
     }
-    
-    async getHCIMPlayer(){
+
+    async getHCIMPlayer() {
         try {
             const testHCIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=${this.playerName}`);
             this.playerType = "HCIM"
             return testHCIM.data;
         }
-        catch (e) { return false;}
+        catch (e) { return false; }
     }
-    
-    async getHiscoreEmbed(data: any){
+
+    async getHiscoreEmbed(data: any) {
         const mappedData = mapData(data);
         this.embed.setTitle(`${capitalizeFirstLetters(this.playerName)}`);
         this.embed.setColor("#FFD700");
         this.embed.setDescription('Old School Runescape Hiscores | Work in progress');
         mappedData.map((activity, i: number) => {
-            if(i == 0) this.embed.setField(activity?.name, activity?.tLevel, true);
-            if(i > 0 && i < 24) this.embed.setField(activity?.name, activity?.level, true);
+            if (i == 0) this.embed.setField(activity?.name, activity?.tLevel, true);
+            if (i > 0 && i < 24) this.embed.setField(activity?.name, activity?.level, true);
         });
         return this.embed.getMessage();
     }
 }
 
-function mapData(data: string): any[] {
+export function mapData(data: string): any[] {
     const lines: string[] = data.split('\n');
     const overallTemplate: string[] = ['rank', 'tLevel', 'tXP'];
     const skillsTemplate: string[] = ['rank', 'level', 'xp'];
@@ -225,3 +225,4 @@ const activities: string[] = [
     'Zalcano',
     'Zulrah'
 ];
+

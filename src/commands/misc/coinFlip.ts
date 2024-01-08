@@ -10,7 +10,7 @@ module.exports = {
         const msg = new BuildMessage();
         const result = Math.random() < 0.5 ? 'Heads' : 'Tails';
 
-        const filePath = result === 'Heads' ? './images/misc/coin_heads.png' : './images/misc/coin_tails.png';
+        const filePath = result === 'Heads' ? './media/images/misc/coin_heads.png' : './media/images/misc/coin_tails.png';
         const fileName = result === 'Heads' ? 'coin_heads.png' : 'coin_tails.png';
 
         const fileBuffer = fs.readFileSync(filePath);
@@ -21,6 +21,7 @@ module.exports = {
 
         await interaction.reply({
             embeds: [msg.getMessage()],
-            files: [{attachment: fileBuffer, name: fileName}]});
+            files: [{ attachment: fileBuffer, name: fileName }]
+        });
     },
 };
