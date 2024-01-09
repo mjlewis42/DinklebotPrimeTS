@@ -5,10 +5,8 @@ import { OSRSClass, mapData } from '../../exports/classes/osrsClass';
 import { capitalizeFirstLetters } from '../../exports/functions/capitalize';
 const wait = require('node:timers/promises').setTimeout;
 
-
 registerFont('./media/fonts/osrs-font.ttf', { family: 'OSRS' });
 registerFont('./media/fonts/osrs-font-bold.ttf', { family: 'OSRS-Bold' });
-
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -25,11 +23,8 @@ module.exports = {
         const ctx = canvas.getContext('2d');
 
         try {
-
             const OSRS = new OSRSClass(interaction, msg);
-
             let player: any = await OSRS.getPlayer();
-
             let playerStats = mapData(player);
 
             let skillsOrdered = [
@@ -57,8 +52,6 @@ module.exports = {
                 playerStats[23].level, // Construction
                 playerStats[22].level, // Hunter
             ];
-
-            console.log(playerStats);
 
             const template = await loadImage('./media/images/osrs/skill_template.png');
             ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
