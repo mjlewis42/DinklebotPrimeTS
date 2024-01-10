@@ -4,16 +4,15 @@ import { capitalizeFirstLetters } from "../functions/capitalize";
 
 export class OSRSClass {
     private interaction;
-    private embed: BuildMessage;
-    private playerName: string;
-    private IMType: string;
-    private playerType: string = '';
+    private readonly playerName: string;
+    private imType: string | undefined;
+    private imEmoji: string | undefined;
+    private imColor: string | undefined;
 
-    constructor(interaction: any, embed: BuildMessage) {
+    constructor(interaction: any) {
         this.interaction = interaction;
         this.playerName = interaction?.options?.getString('name');
-        this.IMType = this.interaction.options.getString('ironman-status');
-        this.embed = embed;
+        this.imType = this.interaction.options.getString('ironman-status');
     }
 
     async executeSubcommands() {
@@ -21,6 +20,9 @@ export class OSRSClass {
         switch (subCommand) {
             case 'player':
                 return await this.playerHiscore();
+            case 'ge':
+                console.log('inside ge')
+                return 'test';
             default:
                 throw new Error('Invalid subcommand');
         }
@@ -29,15 +31,35 @@ export class OSRSClass {
     async playerHiscore() {
         try {
             const getPlayer = await this.getAccountType();
-            return await this.getHiscoreEmbed(getPlayer);
+            let playerStats = mapData(getPlayer);
+            return {
+                ironmanType: {
+                    type: this.imType,
+                    emoji: this.imEmoji,
+                    color: this.imColor
+                },
+                mappedData: playerStats,
+                orderedSkills: getSkillsOrdered(playerStats)
+            };
         }
         catch (e) { return false; }
     }
 
     async getAccountType() {
-        const status = this.interaction.options.getString('ironman-status');
+        const status = this.interaction.options.getString('status');
         try {
-            if (status) { }
+            if (status) {
+                switch (status) {
+                    case 'Standard ironman':
+                        return await this.getIMPlayer();
+                    case 'Hardcore ironman':
+                        return await this.getHCIMPlayer();
+                    case 'Ultimate ironman':
+                        return await this.getUIMPlayer();
+                    default:
+                        throw new Error('Invalid subcommand');
+                }
+            }
             return await this.getPlayer();
         } catch (e) {
             return false;
@@ -47,7 +69,6 @@ export class OSRSClass {
     async getPlayer() {
         try {
             const player = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=${this.playerName}`);
-            this.playerType = "NORMAL"
             return player.data;
         }
         catch (e) { return false; }
@@ -56,7 +77,9 @@ export class OSRSClass {
     async getIMPlayer() {
         try {
             const testIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=${this.playerName}`);
-            this.playerType = "IM"
+            this.imType = "IM"
+            this.imEmoji = "<:im:1194431015981162536>"
+            this.imColor = COLOR[this.imType];
             return testIM.data;
         }
         catch (e) { return false; }
@@ -65,7 +88,9 @@ export class OSRSClass {
     async getUIMPlayer() {
         try {
             const testUIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=${this.playerName}`);
-            this.playerType = "UIM"
+            this.imType = "UIM"
+            this.imEmoji = "<:uim:1194431040899526677>"
+            this.imColor = COLOR[this.imType];
             return testUIM.data;
         }
         catch (e) { return false; }
@@ -74,22 +99,12 @@ export class OSRSClass {
     async getHCIMPlayer() {
         try {
             const testHCIM = await axios.get(`https://secure.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=${this.playerName}`);
-            this.playerType = "HCIM"
+            this.imType = "HCIM"
+            this.imEmoji = "<:hcim:1194430980828709025>"
+            this.imColor = COLOR[this.imType];
             return testHCIM.data;
         }
         catch (e) { return false; }
-    }
-
-    async getHiscoreEmbed(data: any) {
-        const mappedData = mapData(data);
-        this.embed.setTitle(`${capitalizeFirstLetters(this.playerName)}`);
-        this.embed.setColor("#FFD700");
-        this.embed.setDescription('Old School Runescape Hiscores | Work in progress');
-        mappedData.map((activity, i: number) => {
-            if (i == 0) this.embed.setField(activity?.name, activity?.tLevel, true);
-            if (i > 0 && i < 24) this.embed.setField(activity?.name, activity?.level, true);
-        });
-        return this.embed.getMessage();
     }
 }
 
@@ -117,11 +132,40 @@ export function mapData(data: string): any[] {
     return mappedData;
 }
 
-const COLOR = {
-    NORMAL: '',
-    IM: '',
-    UIM: '',
-    HCIM: ''
+const COLOR: any = {
+    NORMAL: '#FFD700',
+    IM: '#808080',
+    UIM: '#FFFFFF',
+    HCIM: '#5C0000'
+}
+
+function getSkillsOrdered(playerStats: any) {
+    let skillsOrdered = [
+        playerStats[1].level, // Attack
+        playerStats[4].level, // Hitpoints
+        playerStats[15].level, // Mining
+        playerStats[3].level, // Strength
+        playerStats[17].level, // Agility
+        playerStats[14].level, // Smithing
+        playerStats[2].level, // Defence
+        playerStats[16].level, // Herblore
+        playerStats[11].level, // Fishing
+        playerStats[5].level, // Ranged
+        playerStats[18].level, // Thieving 
+        playerStats[8].level, // Cooking
+        playerStats[6].level, // Prayer
+        playerStats[13].level, // Crafting
+        playerStats[12].level, // Firemaking
+        playerStats[7].level, // Magic
+        playerStats[10].level, // Fletching
+        playerStats[9].level, // Woodcutting
+        playerStats[21].level, // Runecrafting
+        playerStats[19].level, // Slayer
+        playerStats[20].level, // Farming
+        playerStats[23].level, // Construction
+        playerStats[22].level, // Hunter
+    ];
+    return skillsOrdered;
 }
 
 const activities: string[] = [
