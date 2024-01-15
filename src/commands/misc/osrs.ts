@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { BuildMessage } from '../../exports/classes/messageEmbed';
-import { createCanvas, loadImage, registerFont } from 'canvas';
-import { OSRSClass, mapData } from '../../exports/classes/osrsClass';
-import { capitalizeFirstLetters } from '../../exports/functions/capitalize';
+import { registerFont } from 'canvas';
+import { OSRSClass } from '../../exports/classes/osrsClass';
 import {CanvasClass} from "../../exports/classes/canvasCreation";
 const wait = require('node:timers/promises').setTimeout;
 
@@ -29,20 +28,20 @@ module.exports = {
                         { name: 'Hardcore ironman', value: 'Hardcore ironman' },
                         { name: 'Ultimate ironman', value: 'Ultimate ironman' }
                     )))
-        .addSubcommand(subcommand => subcommand
+        /*.addSubcommand(subcommand => subcommand
             .setName('ge')
             .setDescription("Search the OSRS Grand Exchange!")
             .addStringOption(option => option
                 .setName('item-name')
                 .setDescription('Name of item')
-                .setRequired(true))
-        ),
+                .setRequired(true)))*/
+        ,
     async execute(interaction: any) {
         await interaction.deferReply();
-        const msg = new BuildMessage();
+        const msg: BuildMessage = new BuildMessage();
         
         try {
-            const OSRS = new OSRSClass(interaction);
+            const OSRS:OSRSClass = new OSRSClass(interaction);
             
             let response: any = await OSRS.executeSubcommands();
             if(!response) throw new Error();
