@@ -18,8 +18,26 @@ export class MTGClass {
                 return await this.cardSearch();
             case 'card-random':
                 return await this.getCardRandom();
+            case 'id':
+                return await this.getCardByID();
             default:
                 throw new Error('Invalid subcommand');
+        }
+    }
+    
+    async getCardByID(){
+        try {
+            const set = this.interaction.options.getString('set').toLowerCase();
+            const id = this.interaction.options.getNumber('id');
+            let lg = '';
+            
+            if(this.interaction.options.getString('lg')) lg = this.interaction.options.getString('lg').toLowerCase();
+            
+            const getCard = await axios.get(`https://api.scryfall.com/cards/${set}/${id}/${lg}`);
+            return this.getCardEmbed(getCard.data);
+        }
+        catch (e) {
+            return false;
         }
     }
 
@@ -76,18 +94,19 @@ export class MTGClass {
     }
     
     getCardEmbed(cardData: any){
-        let {name, set_name, rarity, released_at, prices: {usd: priceUSD}} = cardData;
+        let {name, scryfall_uri, set_name, rarity, released_at, prices: {usd: priceUSD}, legalities:{commander, modern}} = cardData;
         const normalImage = cardData?.image_uris?.normal || cardData?.image_uris?.png;
         const embedArray = [];
         
         this.msgEmb.setTitle(name);
+        this.msgEmb.setURL(scryfall_uri);
         this.msgEmb.setColor(getRarityColor(rarity));
         this.msgEmb.setImage(normalImage);
-        this.msgEmb.setURL('https://cards.scryfall.io');
         this.msgEmb.setDescription(`**Set**: ${set_name}`);
         this.msgEmb.setField("Price", priceUSD ? `$${priceUSD}` : 'N/A', true);
         this.msgEmb.setField("Rarity", `${rarity}`, true);
         this.msgEmb.setField("Release", `${released_at}`, true);
+        this.msgEmb.setField("Format", `Modern: ${getLegalityEmoji(modern)}\nCommander: ${getLegalityEmoji(commander)}`);
         
         const links = generateLinks(cardData);
         this.msgEmb.setField("Links", links.trim());
@@ -110,6 +129,11 @@ export class MTGClass {
     }
 }
 
+function getLegalityEmoji(legality: string){
+    if(legality === 'legal') return ':white_check_mark:';
+    else return ':x:';
+}
+
 function getRarityColor(rarity: string): string {
     const RARITY_COLORS = {
         common: '#000000',
@@ -126,8 +150,8 @@ function generateLinks(cardData: any): string {
     const linksArray = [];
     if (cardData?.purchase_uris) {
         if (cardData.purchase_uris.tcgplayer) linksArray.push(`[TCGplayer](${cardData.purchase_uris.tcgplayer})`);
-        if (cardData.purchase_uris.cardhoarder) linksArray.push(`[Cardhoarder](${cardData.purchase_uris.cardhoarder})`);
-        if (cardData.purchase_uris.cardmarket) linksArray.push(`[cardmarket](${cardData.purchase_uris.cardmarket})`);
+        //if (cardData.purchase_uris.cardhoarder) linksArray.push(`[Cardhoarder](${cardData.purchase_uris.cardhoarder})`);
+        //if (cardData.purchase_uris.cardmarket) linksArray.push(`[cardmarket](${cardData.purchase_uris.cardmarket})`);
     }
     return linksArray.join(' | ');
 }

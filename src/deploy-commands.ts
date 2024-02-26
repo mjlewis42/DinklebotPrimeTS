@@ -25,8 +25,8 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const token: any = process.env.ENVIRONMENT === 'DEV' ? process.env.WATTOBOT_TOKEN : process.env.DINKLEBOT_TOKEN
-const clientID: any = process.env.ENVIRONMENT === 'DEV' ? process.env.WATTOBOT_CLIENTID : process.env.DINKLEBOT_CLIENTID
+const token: any = process.env.NODE_ENV === 'DEV' ? process.env.WATTOBOT_TOKEN : process.env.DINKLEBOT_TOKEN
+const clientID: any = process.env.NODE_ENV === 'DEV' ? process.env.WATTOBOT_CLIENTID : process.env.DINKLEBOT_CLIENTID
 const rest = new REST().setToken(token!);
 
 // and deploy your commands!

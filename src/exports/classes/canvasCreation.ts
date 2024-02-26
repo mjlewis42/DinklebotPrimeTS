@@ -1,21 +1,26 @@
 ﻿import {createCanvas, loadImage} from "canvas";
 import {capitalizeFirstLetters} from "../functions/capitalize";
-import {BuildMessage} from "./messageEmbed";
+import {EmbedBuilder} from "discord.js";
 
 export class CanvasClass {
     private interaction: any;
-    private msgEmbed: BuildMessage;
-    constructor(interaction: any, msgEmbed: BuildMessage){
+    private msgEmbed: EmbedBuilder;
+    constructor(interaction: any, msgEmbed: EmbedBuilder){
         this.interaction = interaction;
         this.msgEmbed = msgEmbed;
     }
     
     async getOSRSPlayer(data: any){
-        const canvas = createCanvas(204, 275);
+        const canvas = createCanvas(204, 275); // Double the width to accommodate two images side by side
         const ctx = canvas.getContext('2d');
-        const template = await loadImage('./media/images/osrs/skill_template.png');
-        
-        ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
+        const skillTemplate = await loadImage('./media/images/osrs/skill_template.png');
+        const bossTemplate = await loadImage('./media/images/osrs/boss_template.png');
+
+        // Draw the first template image on the left
+        ctx.drawImage(skillTemplate, 0, 0, canvas.width, canvas.height);
+        // Draw the second template image on the right
+        //ctx.drawImage(bossTemplate, canvas.width / 2, 0, canvas.width / 2, canvas.height);
+
         ctx.font = '14px OSRS';
         ctx.fillStyle = 'yellow';
         ctx.textAlign = 'center';
@@ -25,6 +30,7 @@ export class CanvasClass {
 
         for (let row: number = 0; row < 8; row++) {
             for (let column: number = 0; column < 3; column++) {
+                //console.log(data)
                 let skill = data?.orderedSkills[row * 3 + column];
                 if (column == 2 && row == 7) {
                     ctx.font = '10px OSRS-Bold';
@@ -38,9 +44,8 @@ export class CanvasClass {
 
         this.msgEmbed.setImage('attachment://skills.png');
         this.msgEmbed.setColor("#FFD700");
-        if(data?.ironmanType.type){
-            this.msgEmbed.setColor(data?.ironmanType?.color);
-        }
+        //this.msgEmbed.setThumbnail('attachment://skills.png');
+        if(data?.ironmanType.type){this.msgEmbed.setColor(data?.ironmanType?.color);}
         this.msgEmbed.setTitle(`${data?.ironmanType?.emoji ? data?.ironmanType?.emoji : ''} ${capitalizeFirstLetters(this.interaction.options.getString('name'))}`);
         return canvas.toBuffer('image/png');
     }

@@ -1,8 +1,14 @@
-import { SlashCommandBuilder } from 'discord.js';
-import { BuildMessage } from '../../exports/classes/messageEmbed';
-import { registerFont } from 'canvas';
-import { OSRSClass } from '../../exports/classes/osrsClass';
+import {
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder,
+    SlashCommandBuilder
+} from 'discord.js';
+import {BuildMessage} from '../../exports/classes/messageEmbed';
+import {registerFont} from 'canvas';
+import {OSRSClass} from '../../exports/classes/osrsClass';
 import {CanvasClass} from "../../exports/classes/canvasCreation";
+
 const wait = require('node:timers/promises').setTimeout;
 
 registerFont('./media/fonts/osrs-font.ttf', { family: 'OSRS' });
@@ -38,23 +44,34 @@ module.exports = {
         ,
     async execute(interaction: any) {
         await interaction.deferReply();
-        const msg: BuildMessage = new BuildMessage();
-        
-        try {
-            const OSRS:OSRSClass = new OSRSClass(interaction);
-            
-            let response: any = await OSRS.executeSubcommands();
-            if(!response) throw new Error();
+        const msg = new BuildMessage();
+        const embedArray = [];
 
-            if(interaction.options.getSubcommand() === 'player') {
-                const canvas = new CanvasClass(interaction, msg);
-                const attachment = await canvas.getOSRSPlayer(response);
+        try {
+            const OSRS: OSRSClass = new OSRSClass(interaction);
+
+            let response: any = await OSRS.executeSubcommands();
+            if (!response) throw new Error();
+
+            if (interaction.options.getSubcommand() === 'player') {
+                const canvas: CanvasClass = new CanvasClass(interaction, new EmbedBuilder());
+                const canvasTwo: CanvasClass = new CanvasClass(interaction, new EmbedBuilder());
+
+                const attachment: Buffer = await canvas.getOSRSPlayer(response);
+                const attachmentTwo: Buffer = await canvasTwo.getOSRSPlayer(response);
+
+                const embedArray = [
+                    { embeds: [attachment] }
+                ];
+
                 await interaction.editReply({
-                    embeds: [msg.getMessage()],
-                    files: [{attachment, name: 'skills.png'}]
+                    embeds: embedArray,
+                    files: [
+                        { attachment, name: 'skills.png' },
+                        //{ attachment: attachmentTwo, name: 'skills_two.png' }
+                    ],
                 });
-            }
-            else{
+            } else {
                 await interaction.editReply('Test');
             }
         } catch (error) {

@@ -46,4 +46,4 @@ for (const file of eventFiles) {
 	else client.on(event.name, (...args) => event.execute(...args));
 }
 
-client.login(process.env.ENVIRONMENT === 'DEV' ? process.env.WATTOBOT_TOKEN : process.env.DINKLEBOT_TOKEN);
+client.login(process.env.NODE_ENV === 'DEV' ? process.env.WATTOBOT_TOKEN : process.env.DINKLEBOT_TOKEN);

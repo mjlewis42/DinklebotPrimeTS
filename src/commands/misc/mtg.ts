@@ -17,7 +17,22 @@ module.exports = {
                     .setName('name')
                     .setDescription('Search for a MTG card (roughly) by name')
                     .setRequired(true)
-        )),
+                ))
+        .addSubcommand(subcommand => subcommand
+            .setName('id')
+            .setDescription("Find MTG card by id: SET(3 characters) + ID([id/total #] id only, or '0[id]' ignoring first 0")
+            .addStringOption(option => option
+                .setName('set')
+                .setDescription("3 letters (sometimes with #'s (40k)) located at the bottom of card (usually bottom left)")
+                .setRequired(true))
+            .addNumberOption(option => option
+                .setName('id')
+                .setDescription("Bottom of card (usually left) ex. formats: [id/total #] id only, or '0[id]' ignoring first 0")
+                .setRequired(true))
+            .addStringOption(option => option
+                .setName('lg')
+                .setDescription("Optional language filter by abbreviation: EN, JA, PT"))
+        ),
     async execute(interaction: any) {
         try {
             await interaction.deferReply();
