@@ -14,7 +14,7 @@
             fields: [],
             image: null,
             url: null,
-            footer: { text: 'Dinkle-Bot', iconURL: 'https://i.imgur.com/lHImYnD.png' },
+            footer: { text: 'Dinkle-Bot', iconURL: 'https://imgur.com/AOrYBc7' },
             timestamp: new Date(),
         };
     }
@@ -29,7 +29,9 @@
 
     setThumbnail(thumbnail: string) {this.messageEmbed.thumbnail = { url: thumbnail };}
 
-    setImage(image: any) {this.messageEmbed.image = { url: image };}
+    setImage(image: any) {
+        this.messageEmbed.image = { url: image };
+    }
 
     setField(name: string, value: string, inline: boolean = false) {this.messageEmbed.fields.push({ name, value, inline });}
     

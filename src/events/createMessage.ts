@@ -8,8 +8,8 @@ module.exports = {
         
         const roleCenterMessage:EmbedBuilder = getMessageEmbed();
         const roleCenterButton: ActionRowBuilder<AnyComponentBuilder> = getButtonEmbed();
-        //await channel.send('image here');
-        //await channel.send({embeds: [roleCenterMessage], components: [roleCenterButton]});
+        /*await channel.send('image here');
+        await channel.send({embeds: [roleCenterMessage], components: [roleCenterButton]});*/
     }
 };
 
@@ -22,6 +22,7 @@ const getMessageEmbed = () => {
         .setDescription('Click Buttons -> Get Roles <:gigachad:1032389253423960124>')
         .addFields(
             { name: '🎮 Gaming / General', value: 'Stay connected with notifications about gaming-related playgroups, server events, streams, and more from fellow members.'},
+            { name: '👾 Free Games', value: 'Get notified when new free games drop with Epic Games.'},
             { name: '🎴 Magic the Gathering', value: 'Get notified about Magic the Gathering playgroups on SpellTable and other MTG-related activities.'},
         )
         .setTimestamp()
@@ -35,6 +36,12 @@ const getButtonEmbed = () => {
         .setEmoji('🎮')
         .setStyle(ButtonStyle.Secondary);
 
+    const freeGames: ButtonBuilder = new ButtonBuilder()
+        .setCustomId('FG')
+        .setLabel('Free Games')
+        .setEmoji('👾')
+        .setStyle(ButtonStyle.Secondary);
+
     const mtg: ButtonBuilder = new ButtonBuilder()
         .setCustomId('MTG')
         .setLabel('Magic the Gathering')
@@ -42,5 +49,5 @@ const getButtonEmbed = () => {
         .setStyle(ButtonStyle.Secondary);
 
     return new ActionRowBuilder()
-        .addComponents(gamingGeneral, mtg);
+        .addComponents(gamingGeneral, freeGames, mtg);
 }

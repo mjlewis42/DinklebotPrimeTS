@@ -8,11 +8,13 @@
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "libsodium-wrappers": "^0.7.11",
+    "node-schedule": "^2.1.1",
     "npx": "^10.2.2",
     "pg": "^8.11.3",
     "sequelize": "^6.33.0"
   },
   "devDependencies": {
+    "@types/node-schedule": "^2.1.7",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"

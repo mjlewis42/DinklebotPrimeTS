@@ -38,6 +38,12 @@ const roles: any = {
         color: '#31b470',
         emoji: 'https://i.imgur.com/OAkodux.png',
     },
+    FG: {
+        name: 'FG',
+        id: '1227100930005274756',
+        color: '#eae400',
+        emoji: 'https://imgur.com/auvuuLQ.png',
+    },
     MTG: {
         name: 'MTG',
         id: '1203843471761481778',
