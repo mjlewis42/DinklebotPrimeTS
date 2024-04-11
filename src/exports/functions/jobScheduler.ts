@@ -8,9 +8,9 @@ export const scheduleBotJob = async (data: any, client: any) => {
                 case 'epic':
                     try {
                         console.log(`RUNNING EPIC JOB at ${new Date().toLocaleString()}`)
-                        const data = await new FreeGames().printData('epic', client);
+                        const data = await new FreeGames().printData('epic', client, true);
                         //schedule again
-                        console.log(`Scheduling new EPIC JOB at ${new Date().toLocaleString()}`)
+                        console.log(`Scheduling new EPIC JOB at ${new Date().toLocaleString()} for ${data?.newDateString}`)
                         if(data?.newDateString) await scheduleBotJob(data, client);
                     } catch (error) {
                         console.error(error);

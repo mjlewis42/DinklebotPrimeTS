@@ -7,7 +7,7 @@ module.exports = {
             if(process.env.NODE_ENV === 'DEV') return
             const embed: EmbedBuilder = new EmbedBuilder();
             const channelId: string = '854891072642613258';
-            const messageId: string = '1204501973995622490';
+            const messageId: string = '1228008151039606805';
             const channel = client.channels.cache.get(channelId);
             if (!channel) return console.error("UNABLE TO EDIT .GIF");
             const links: string[] = [

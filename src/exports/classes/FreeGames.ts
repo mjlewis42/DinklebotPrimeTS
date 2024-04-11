@@ -33,12 +33,12 @@ export class FreeGames {
             .setThumbnail('https://imgur.com/QWsk9YP.png')
             .setColor('Yellow')
             .addFields({
-                name: "Current Games",
+                name: "Current Free Games :arrow_forward:",
                 value: this.getGamesList(currentGames),
                 inline: true
             })
             .addFields({
-                name: "Next Games",
+                name: "Next Games :arrow_right:",
                 value: this.getGamesList(futureGames),
                 inline: true
             })
@@ -51,7 +51,10 @@ export class FreeGames {
     }
 
     private getGamesList(games: any[]): string {
-        return games.map((game: any, i: number) => `${i + 1}: *${game.title}*`).join('\n');
+        const gamesList = games.map((game: any, i: number) => 
+            `${i + 1}: ***${game.title}*** | Price: ${game?.price?.totalPrice?.fmtPrice?.originalPrice} - *${game?.seller?.name}*`)
+                .join('\n\n');
+        return gamesList;
     }
     
     private getGameImage(currentGames: any){
@@ -66,15 +69,17 @@ export class FreeGames {
         });
     }
     
-    async printData(option: string, client: any) {
+    async printData(option: string, client: any, optional?: boolean | null) {
         const freeChannel = client.channels.cache.get('1225743397386719263');
         await freeChannel.bulkDelete(10);
         
         switch (option) {
             case "epic":
                 await this.getEpicGamesData();
-                await freeChannel.send({content: "<@&1227100930005274756>", embeds: this.gamesArray});
                 
+                if(optional) await freeChannel.send({content: "<@&1227100930005274756>", embeds: this.gamesArray});
+                else{ await freeChannel.send({embeds: this.gamesArray});}
+
                 const startDate = new Date(this.futurePromotion.startDate);
                 startDate.setMinutes(startDate.getMinutes() + 15);
                 this.futurePromotion.newDateString = startDate.toISOString();
