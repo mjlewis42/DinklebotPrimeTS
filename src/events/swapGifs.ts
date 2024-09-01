@@ -4,7 +4,7 @@ module.exports = {
     name: Events.ClientReady,
     async execute(client: any) {
         try {
-            if(process.env.NODE_ENV === 'DEV') return
+            if(process.env.NODE_ENV === 'DEV' || process.env.NODE_ENV === 'PROD') return
             const embed: EmbedBuilder = new EmbedBuilder();
             const channelId: string = '854891072642613258';
             const messageId: string = '1228008151039606805';

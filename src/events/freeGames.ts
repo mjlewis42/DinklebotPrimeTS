@@ -8,10 +8,10 @@ module.exports = {
     async execute(client: any) {
         try {
             //get Free Epic Games
-            const data = await new FreeGames().printData('epic', client, false);
+            //const data = await new FreeGames().printData('epic', client, false);
             
             //schedule Epic Job
-            await scheduleBotJob(data, client);
+//          await scheduleBotJob(data, client);
             
         } catch (error) {
             console.error(error);

@@ -1,5 +1,6 @@
 ﻿import axios from "axios";
 import {EmbedBuilder} from "discord.js";
+import { EpicFreeGames } from 'epic-free-games';
 import {scheduleBotJob} from "../functions/jobScheduler";
 
 export class FreeGames {
@@ -7,10 +8,21 @@ export class FreeGames {
     private futurePromotion: any;
     
     async getEpicGamesData(){
+        //const freeChannel = client.channels.cache.get('1225743397386719263');
+        //await freeChannel.bulkDelete(10);
+        
         try {
+            const epicFreeGames = new EpicFreeGames({ country: 'US', locale: 'en-US', includeAll: true })
             const response = await axios.get('https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions');
-            const epicGamesData = response?.data;
-            this.processEpicGamesData(epicGamesData);
+
+            epicFreeGames.getGames().then(res => {
+                console.log(epicFreeGames)
+            }).catch(err => {
+                // Do something
+            });
+            
+            //const epicGamesData = response?.data;
+            //this.processEpicGamesData(epicGamesData);
         } catch (e) {
             console.error(e);
         }
